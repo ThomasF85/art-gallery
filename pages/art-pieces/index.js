@@ -20,17 +20,17 @@ const List = styled.ul`
 `;
 
 export default function ArtPiecesPage() {
-  const { allSlugs: pieces } = useContext(ArtPiecesContext);
+  const pieces = useContext(ArtPiecesContext);
   const artPiecesInfo = useContext(ArtPiecesInfoContext);
 
   return (
     <List>
-      {pieces?.map((piece) => (
-        <li key={piece}>
+      {pieces?.map(({ slug }) => (
+        <li key={slug}>
           <ArtPiecePreview
-            slug={piece}
+            slug={slug}
             isFavorite={
-              artPiecesInfo?.find((artPiece) => artPiece.slug === piece)
+              artPiecesInfo?.find((artPiece) => artPiece.slug === slug)
                 ?.isFavorite
             }
           />

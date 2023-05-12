@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Link from "next/link.js";
 import FavoriteButton from "../FavoriteButton/index.js";
 import React, { useContext } from "react";
-import { ArtPiecesContext } from "@/pages/_app.js";
+import { ArtPiecesContext, ArtPiecesInfoApiContext } from "@/pages/_app.js";
 
 const ImageContainer = styled.div`
   position: relative;
@@ -53,7 +53,9 @@ const ScreenReaderOnly = styled.span`
 `;
 
 function ArtPiecePreview({ slug, isFavorite }) {
-  const { pieces, onToggleFavorite } = useContext(ArtPiecesContext);
+  const pieces = useContext(ArtPiecesContext);
+  const { toggleFavorite } = useContext(ArtPiecesInfoApiContext);
+
   const piece = pieces.find((piece) => piece.slug === slug);
 
   if (!piece) {
@@ -67,7 +69,7 @@ function ArtPiecePreview({ slug, isFavorite }) {
       <ImageContainer>
         <FavoriteButton
           isFavorite={isFavorite}
-          onToggleFavorite={() => onToggleFavorite(slug)}
+          onToggleFavorite={() => toggleFavorite(slug)}
           positionAbsolute={true}
         />
         <StyledImage

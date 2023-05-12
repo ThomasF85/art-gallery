@@ -6,6 +6,7 @@ import useLocalStorageState from "use-local-storage-state";
 
 export const ArtPiecesContext = createContext();
 export const ArtPiecesInfoContext = createContext();
+export const ArtPiecesInfoApiContext = createContext();
 
 const fetcher = async (...args) => {
   const response = await fetch(...args);
@@ -15,17 +16,26 @@ const fetcher = async (...args) => {
   return await response.json();
 };
 
-export default function App({ Component, pageProps }) {
+const PiecesContextProvider = ({ children }) => {
   const { data, isLoading, error } = useSWR(
     "https://example-apis.vercel.app/api/art",
     fetcher
   );
+
+  return (
+    <ArtPiecesContext.Provider value={isLoading || error ? [] : data}>
+      {children}
+    </ArtPiecesContext.Provider>
+  );
+};
+
+const PiecesInfoContextProvider = ({ children }) => {
   const [artPiecesInfo, setArtPiecesInfo] = useLocalStorageState(
     "art-pieces-info",
     { defaultValue: [] }
   );
 
-  const handleToggleFavorite = useCallback((slug) => {
+  const toggleFavorite = useCallback((slug) => {
     setArtPiecesInfo((prev) => {
       const artPiece = prev.find((piece) => piece.slug === slug);
       if (artPiece) {
@@ -64,26 +74,32 @@ export default function App({ Component, pageProps }) {
     []
   );
 
-  const context = useMemo(
+  const apiContext = useMemo(
     () => ({
-      pieces: isLoading || error ? [] : data,
-      allSlugs: data ? data.map((piece) => piece.slug) : [],
-      onToggleFavorite: handleToggleFavorite,
       addComment,
+      toggleFavorite,
     }),
-    [data, handleToggleFavorite, addComment, error, isLoading]
+    [addComment, toggleFavorite]
   );
 
-  const artPiecesInfoValue = useMemo(() => artPiecesInfo, [artPiecesInfo]);
+  return (
+    <ArtPiecesInfoContext.Provider value={artPiecesInfo}>
+      <ArtPiecesInfoApiContext.Provider value={apiContext}>
+        {children}
+      </ArtPiecesInfoApiContext.Provider>
+    </ArtPiecesInfoContext.Provider>
+  );
+};
 
+export default function App({ Component, pageProps }) {
   return (
     <Layout>
       <GlobalStyle />
-      <ArtPiecesContext.Provider value={context}>
-        <ArtPiecesInfoContext.Provider value={artPiecesInfoValue}>
+      <PiecesContextProvider>
+        <PiecesInfoContextProvider>
           <Component {...pageProps} />
-        </ArtPiecesInfoContext.Provider>
-      </ArtPiecesContext.Provider>
+        </PiecesInfoContextProvider>
+      </PiecesContextProvider>
     </Layout>
   );
 }
