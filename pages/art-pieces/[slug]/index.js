@@ -1,16 +1,22 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ArtPiecesDetails from "../../../components/ArtPiecesDetails";
+import { useAtom } from "jotai";
+import {
+  addCommentAtom,
+  piecesAtom,
+  piecesInfoAtom,
+  toggleFavoriteAtom,
+} from "../../_app.js";
 
-export default function ArtPieceDetailsPage({
-  pieces,
-  artPiecesInfo,
-  onToggleFavorite,
-  addComment,
-}) {
+export default function ArtPieceDetailsPage() {
   const [selectedArtPiece, setSelectedArtPiece] = useState(null);
   const router = useRouter();
   const { slug } = router.query;
+  const [pieces] = useAtom(piecesAtom);
+  const [artPiecesInfo] = useAtom(piecesInfoAtom);
+  const [, onToggleFavorite] = useAtom(toggleFavoriteAtom);
+  const [, addComment] = useAtom(addCommentAtom);
 
   useEffect(() => {
     setSelectedArtPiece(pieces.find((piece) => piece.slug === slug));
