@@ -53,8 +53,9 @@ const ScreenReaderOnly = styled.span`
   border-width: 0;
 `;
 
-function ArtPiecePreview({ slug, isFavorite, onToggleFavorite }) {
+function ArtPiecePreview({ slug, isFavorite }) {
   const [pieces] = useAtom(piecesAtom);
+  const [, onToggleFavorite] = useAtom(toggleFavoriteAtom);
   const piece = pieces.find((piece) => piece.slug === slug);
 
   if (!piece) {
