@@ -1,13 +1,11 @@
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import ArtPiecesDetails from "../../../components/ArtPiecesDetails";
+import { ArtPiecesContext, ArtPiecesInfoContext } from "@/pages/_app";
 
-export default function ArtPieceDetailsPage({
-  pieces,
-  artPiecesInfo,
-  onToggleFavorite,
-  addComment,
-}) {
+export default function ArtPieceDetailsPage() {
+  const { pieces, onToggleFavorite, addComment } = useContext(ArtPiecesContext);
+  const artPiecesInfo = useContext(ArtPiecesInfoContext);
   const [selectedArtPiece, setSelectedArtPiece] = useState(null);
   const router = useRouter();
   const { slug } = router.query;

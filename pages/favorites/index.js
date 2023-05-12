@@ -1,23 +1,37 @@
-import ArtPieces from "../../components/ArtPieces";
+import { useContext } from "react";
+import ArtPiecePreview from "@/components/ArtPiecePreview";
+import { ArtPiecesInfoContext } from "../_app";
+import styled from "styled-components";
 
-export default function FavoritesPage({
-  pieces,
-  artPiecesInfo,
-  onArtPiecesInfo,
-  onToggleFavorite,
-}) {
-  const favorites = pieces.filter((piece) =>
-    artPiecesInfo.find(
-      (artPiece) => artPiece.slug === piece.slug && artPiece.isFavorite
-    )
-  );
+const List = styled.ul`
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+
+  li {
+    width: 30rem;
+    min-width: 10rem;
+    height: 30rem;
+  }
+`;
+
+export default function FavoritesPage() {
+  const artPiecesInfo = useContext(ArtPiecesInfoContext);
+  const favorites = artPiecesInfo
+    .filter((piece) => piece.isFavorite)
+    .map((piece) => piece.slug);
 
   return (
-    <ArtPieces
-      pieces={favorites}
-      onArtPiecesInfo={onArtPiecesInfo}
-      artPiecesInfo={artPiecesInfo}
-      onToggleFavorite={onToggleFavorite}
-    />
+    <List>
+      {favorites?.map((piece) => (
+        <li key={piece}>
+          <ArtPiecePreview slug={piece} isFavorite />
+        </li>
+      ))}
+    </List>
   );
 }

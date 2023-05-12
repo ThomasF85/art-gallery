@@ -2,6 +2,8 @@ import { StyledImage } from "../StyledImage.js";
 import styled from "styled-components";
 import Link from "next/link.js";
 import FavoriteButton from "../FavoriteButton/index.js";
+import React, { useContext } from "react";
+import { ArtPiecesContext } from "@/pages/_app.js";
 
 const ImageContainer = styled.div`
   position: relative;
@@ -50,20 +52,22 @@ const ScreenReaderOnly = styled.span`
   border-width: 0;
 `;
 
-export default function ArtPiecePreview({
-  title,
-  image,
-  artist,
-  slug,
-  isFavorite,
-  onToggleFavorite,
-}) {
+function ArtPiecePreview({ slug, isFavorite }) {
+  const { pieces, onToggleFavorite } = useContext(ArtPiecesContext);
+  const piece = pieces.find((piece) => piece.slug === slug);
+
+  if (!piece) {
+    return <div>Loading...</div>;
+  }
+
+  const { imageSource: image, artist, name: title } = piece;
+
   return (
     <Figure>
       <ImageContainer>
         <FavoriteButton
           isFavorite={isFavorite}
-          onToggleFavorite={onToggleFavorite}
+          onToggleFavorite={() => onToggleFavorite(slug)}
           positionAbsolute={true}
         />
         <StyledImage
@@ -85,3 +89,5 @@ export default function ArtPiecePreview({
     </Figure>
   );
 }
+
+export default React.memo(ArtPiecePreview);
