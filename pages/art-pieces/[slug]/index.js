@@ -1,16 +1,16 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ArtPiecesDetails from "../../../components/ArtPiecesDetails";
+import useStore from "@/lib/useStore";
 
-export default function ArtPieceDetailsPage({
-  pieces,
-  artPiecesInfo,
-  onToggleFavorite,
-  addComment,
-}) {
+export default function ArtPieceDetailsPage() {
   const [selectedArtPiece, setSelectedArtPiece] = useState(null);
   const router = useRouter();
   const { slug } = router.query;
+  const pieces = useStore((state) => state.pieces);
+  const artPiecesInfo = useStore((state) => state.artPiecesInfo);
+  const toggleFavorite = useStore((state) => state.toggleFavorite);
+  const addComment = useStore((state) => state.addComment);
 
   useEffect(() => {
     setSelectedArtPiece(pieces.find((piece) => piece.slug === slug));
@@ -46,7 +46,7 @@ export default function ArtPieceDetailsPage({
         artPiecesInfo.find((piece) => piece.slug === selectedArtPiece.slug)
           ?.isFavorite
       }
-      onToggleFavorite={() => onToggleFavorite(selectedArtPiece.slug)}
+      onToggleFavorite={() => toggleFavorite(selectedArtPiece.slug)}
       colors={selectedArtPiece.colors}
       comments={selectedArtPieceComments}
       addComment={(newComment) => addComment(selectedArtPiece.slug, newComment)}
