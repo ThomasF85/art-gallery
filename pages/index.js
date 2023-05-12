@@ -1,11 +1,13 @@
 import Head from "next/head.js";
 import Spotlight from "../components/Spotlight/index.js";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleFavoriteAction } from "@/lib/actions.js";
 
-export default function SpotlightPage({
-  pieces,
-  artPiecesInfo,
-  onToggleFavorite,
-}) {
+export default function SpotlightPage() {
+  const pieces = useSelector((state) => state.pieces);
+  const piecesInfo = useSelector((state) => state.piecesInfo);
+  const dispatch = useDispatch();
+
   const spotlightPiece =
     pieces[Math.floor(Math.random() * (pieces.length - 1))];
 
@@ -19,10 +21,12 @@ export default function SpotlightPage({
           image={spotlightPiece.imageSource}
           artist={spotlightPiece.artist}
           isFavorite={
-            artPiecesInfo.find((piece) => piece.slug === spotlightPiece.slug)
+            piecesInfo.find((piece) => piece.slug === spotlightPiece.slug)
               ?.isFavorite
           }
-          onToggleFavorite={() => onToggleFavorite(spotlightPiece.slug)}
+          onToggleFavorite={() =>
+            dispatch(toggleFavoriteAction(spotlightPiece.slug))
+          }
         />
       )}
     </>

@@ -1,16 +1,16 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import ArtPiecesDetails from "../../../components/ArtPiecesDetails";
+import { addCommentAction, toggleFavoriteAction } from "@/lib/actions";
 
-export default function ArtPieceDetailsPage({
-  pieces,
-  artPiecesInfo,
-  onToggleFavorite,
-  addComment,
-}) {
+export default function ArtPieceDetailsPage() {
   const [selectedArtPiece, setSelectedArtPiece] = useState(null);
   const router = useRouter();
   const { slug } = router.query;
+  const pieces = useSelector((state) => state.pieces);
+  const piecesInfo = useSelector((state) => state.piecesInfo);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     setSelectedArtPiece(pieces.find((piece) => piece.slug === slug));
@@ -26,7 +26,7 @@ export default function ArtPieceDetailsPage({
     return () => clearTimeout(timeoutId);
   }, [selectedArtPiece, router]);
 
-  const selectedArtPieceComments = artPiecesInfo.find(
+  const selectedArtPieceComments = piecesInfo.find(
     (piece) => piece.slug === selectedArtPiece?.slug
   )?.comments;
 
@@ -43,13 +43,17 @@ export default function ArtPieceDetailsPage({
       year={selectedArtPiece.year}
       genre={selectedArtPiece.genre}
       isFavorite={
-        artPiecesInfo.find((piece) => piece.slug === selectedArtPiece.slug)
+        piecesInfo.find((piece) => piece.slug === selectedArtPiece.slug)
           ?.isFavorite
       }
-      onToggleFavorite={() => onToggleFavorite(selectedArtPiece.slug)}
+      onToggleFavorite={() =>
+        dispatch(toggleFavoriteAction(selectedArtPiece.slug))
+      }
       colors={selectedArtPiece.colors}
       comments={selectedArtPieceComments}
-      addComment={(newComment) => addComment(selectedArtPiece.slug, newComment)}
+      addComment={(newComment) =>
+        dispatch(addCommentAction(selectedArtPiece.slug, newComment))
+      }
     />
   );
 }

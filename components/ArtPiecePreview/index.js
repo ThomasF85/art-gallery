@@ -2,6 +2,8 @@ import { StyledImage } from "../StyledImage.js";
 import styled from "styled-components";
 import Link from "next/link.js";
 import FavoriteButton from "../FavoriteButton/index.js";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleFavoriteAction } from "@/lib/actions.js";
 
 const ImageContainer = styled.div`
   position: relative;
@@ -50,20 +52,28 @@ const ScreenReaderOnly = styled.span`
   border-width: 0;
 `;
 
-export default function ArtPiecePreview({
-  title,
-  image,
-  artist,
-  slug,
-  isFavorite,
-  onToggleFavorite,
-}) {
+export default function ArtPiecePreview({ slug }) {
+  const piece = useSelector((state) =>
+    state.pieces.find((piece) => piece.slug === slug)
+  );
+  const isFavorite = useSelector(
+    (state) =>
+      !!state.piecesInfo.find((piece) => piece.slug === slug)?.isFavorite
+  );
+  const dispatch = useDispatch();
+
+  if (!piece) {
+    return <div>Loading...</div>;
+  }
+
+  const { imageSource: image, artist, name: title } = piece;
+
   return (
     <Figure>
       <ImageContainer>
         <FavoriteButton
           isFavorite={isFavorite}
-          onToggleFavorite={onToggleFavorite}
+          onToggleFavorite={() => dispatch(toggleFavoriteAction(slug))}
           positionAbsolute={true}
         />
         <StyledImage
