@@ -2,6 +2,7 @@ import { StyledImage } from "../StyledImage.js";
 import styled from "styled-components";
 import Link from "next/link.js";
 import FavoriteButton from "../FavoriteButton/index.js";
+import useStore from "@/lib/useStore.js";
 
 const ImageContainer = styled.div`
   position: relative;
@@ -50,20 +51,30 @@ const ScreenReaderOnly = styled.span`
   border-width: 0;
 `;
 
-export default function ArtPiecePreview({
-  title,
-  image,
-  artist,
-  slug,
-  isFavorite,
-  onToggleFavorite,
-}) {
+export default function ArtPiecePreview({ slug }) {
+  const piece = useStore((state) =>
+    state.pieces.find((piece) => piece.slug === slug)
+  );
+
+  const toggleFavorite = useStore((state) => state.toggleFavorite);
+  const isFavorite = useStore(
+    (state) =>
+      state.artPiecesInfo?.find((artPiece) => artPiece.slug === piece.slug)
+        ?.isFavorite
+  );
+
+  if (!piece) {
+    return <div>Loading...</div>;
+  }
+
+  const { imageSource: image, artist, name: title } = piece;
+
   return (
     <Figure>
       <ImageContainer>
         <FavoriteButton
           isFavorite={isFavorite}
-          onToggleFavorite={onToggleFavorite}
+          onToggleFavorite={() => toggleFavorite(slug)}
           positionAbsolute={true}
         />
         <StyledImage
