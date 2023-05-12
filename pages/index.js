@@ -1,13 +1,12 @@
 import Head from "next/head.js";
 import Spotlight from "../components/Spotlight/index.js";
 import { useAtom } from "jotai";
-import { piecesAtom, piecesInfoAtom, toggleFavoriteAtom } from "./_app.js";
+import { piecesAtom, usePiecesInfo } from "./_app.js";
 
 export default function SpotlightPage() {
   const [pieces] = useAtom(piecesAtom);
-  const [artPiecesInfo] = useAtom(piecesInfoAtom);
+  const { piecesInfo, toggleFavorite } = usePiecesInfo();
 
-  const [, onToggleFavorite] = useAtom(toggleFavoriteAtom);
   const spotlightPiece =
     pieces[Math.floor(Math.random() * (pieces.length - 1))];
 
@@ -21,10 +20,10 @@ export default function SpotlightPage() {
           image={spotlightPiece.imageSource}
           artist={spotlightPiece.artist}
           isFavorite={
-            artPiecesInfo.find((piece) => piece.slug === spotlightPiece.slug)
+            piecesInfo.find((piece) => piece.slug === spotlightPiece.slug)
               ?.isFavorite
           }
-          onToggleFavorite={() => onToggleFavorite(spotlightPiece.slug)}
+          onToggleFavorite={() => toggleFavorite(spotlightPiece.slug)}
         />
       )}
     </>

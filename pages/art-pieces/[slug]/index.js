@@ -2,21 +2,14 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import ArtPiecesDetails from "../../../components/ArtPiecesDetails";
 import { useAtom } from "jotai";
-import {
-  addCommentAtom,
-  piecesAtom,
-  piecesInfoAtom,
-  toggleFavoriteAtom,
-} from "../../_app.js";
+import { piecesAtom, usePiecesInfo } from "../../_app.js";
 
 export default function ArtPieceDetailsPage() {
   const [selectedArtPiece, setSelectedArtPiece] = useState(null);
   const router = useRouter();
   const { slug } = router.query;
   const [pieces] = useAtom(piecesAtom);
-  const [artPiecesInfo] = useAtom(piecesInfoAtom);
-  const [, onToggleFavorite] = useAtom(toggleFavoriteAtom);
-  const [, addComment] = useAtom(addCommentAtom);
+  const { piecesInfo, toggleFavorite, addComment } = usePiecesInfo();
 
   useEffect(() => {
     setSelectedArtPiece(pieces.find((piece) => piece.slug === slug));
@@ -32,7 +25,7 @@ export default function ArtPieceDetailsPage() {
     return () => clearTimeout(timeoutId);
   }, [selectedArtPiece, router]);
 
-  const selectedArtPieceComments = artPiecesInfo.find(
+  const selectedArtPieceComments = piecesInfo.find(
     (piece) => piece.slug === selectedArtPiece?.slug
   )?.comments;
 
@@ -49,10 +42,10 @@ export default function ArtPieceDetailsPage() {
       year={selectedArtPiece.year}
       genre={selectedArtPiece.genre}
       isFavorite={
-        artPiecesInfo.find((piece) => piece.slug === selectedArtPiece.slug)
+        piecesInfo.find((piece) => piece.slug === selectedArtPiece.slug)
           ?.isFavorite
       }
-      onToggleFavorite={() => onToggleFavorite(selectedArtPiece.slug)}
+      onToggleFavorite={() => toggleFavorite(selectedArtPiece.slug)}
       colors={selectedArtPiece.colors}
       comments={selectedArtPieceComments}
       addComment={(newComment) => addComment(selectedArtPiece.slug, newComment)}
