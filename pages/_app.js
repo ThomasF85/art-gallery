@@ -10,20 +10,10 @@ export const allSlugsAtom = atom((get) =>
   get(writablePiecesAtom).map((piece) => piece.slug)
 );
 
-// Workaround since using derived atoms does not work currently with atomWithStorage
-function persistedAtom(atom) {
-  if (atom.state?.artPiecesInfo) {
-    return atom.state.artPiecesInfo;
-  }
-  return atom;
-}
-
 const writablePiecesInfoAtom = atomWithStorage("art-gallery-storage", []);
-export const piecesInfoAtom = atom((get) =>
-  persistedAtom(get(writablePiecesInfoAtom))
-);
+export const piecesInfoAtom = atom((get) => get(writablePiecesInfoAtom));
 export const addCommentAtom = atom(null, (get, set, ...args) => {
-  const piecesInfo = persistedAtom(get(writablePiecesInfoAtom));
+  const piecesInfo = get(writablePiecesInfoAtom);
   const [slug, newComment] = args;
   const artPiece = piecesInfo.find((piece) => piece.slug === slug);
   if (artPiece) {
@@ -47,7 +37,7 @@ export const addCommentAtom = atom(null, (get, set, ...args) => {
   }
 });
 export const toggleFavoriteAtom = atom(null, (get, set, ...args) => {
-  const piecesInfo = persistedAtom(get(writablePiecesInfoAtom));
+  const piecesInfo = get(writablePiecesInfoAtom);
   const [slug] = args;
   const artPiece = piecesInfo.find((piece) => piece.slug === slug);
   if (artPiece) {
