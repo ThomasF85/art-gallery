@@ -1,7 +1,8 @@
-import { useAtom } from "jotai";
+import { useAtomValue } from "jotai";
 import ArtPiecePreview from "@/components/ArtPiecePreview/index.js";
 import styled from "styled-components";
-import { piecesAtom, usePiecesInfo } from "../_app";
+import { piecesAtom } from "@/lib/atoms/pieces";
+import { piecesInfoAtom } from "@/lib/atoms/piecesInfo";
 
 const List = styled.ul`
   list-style: none;
@@ -20,8 +21,8 @@ const List = styled.ul`
 `;
 
 export default function ArtPiecesPage() {
-  const [pieces] = useAtom(piecesAtom);
-  const { piecesInfo, toggleFavorite } = usePiecesInfo();
+  const pieces = useAtomValue(piecesAtom);
+  const piecesInfo = useAtomValue(piecesInfoAtom);
 
   return (
     <List>
@@ -33,7 +34,6 @@ export default function ArtPiecesPage() {
               piecesInfo?.find((artPiece) => artPiece.slug === piece.slug)
                 ?.isFavorite
             }
-            onToggleFavorite={toggleFavorite}
           />
         </li>
       ))}

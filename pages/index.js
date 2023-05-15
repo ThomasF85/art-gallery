@@ -1,9 +1,10 @@
 import Head from "next/head.js";
 import Spotlight from "../components/Spotlight/index.js";
 import { useAtom } from "jotai";
-import { piecesAtom, usePiecesInfo } from "./_app.js";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
+import { piecesAtom } from "@/lib/atoms/pieces.js";
+import { piecesInfoAtom, toggleFavorite } from "@/lib/atoms/piecesInfo.js";
 
 const ButtonContainer = styled.div`
   text-align: center;
@@ -28,7 +29,7 @@ function randomIndex(arrayLength) {
 
 export default function SpotlightPage() {
   const [pieces] = useAtom(piecesAtom);
-  const { piecesInfo, toggleFavorite } = usePiecesInfo();
+  const [piecesInfo, dispatch] = useAtom(piecesInfoAtom);
   const [index, setIndex] = useState(null);
 
   useEffect(() => {
@@ -55,7 +56,9 @@ export default function SpotlightPage() {
               piecesInfo.find((piece) => piece.slug === spotlightPiece.slug)
                 ?.isFavorite
             }
-            onToggleFavorite={() => toggleFavorite(spotlightPiece.slug)}
+            onToggleFavorite={() =>
+              dispatch(toggleFavorite(spotlightPiece.slug))
+            }
           />
           <ButtonContainer>
             <Button

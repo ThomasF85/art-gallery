@@ -2,9 +2,10 @@ import { StyledImage } from "../StyledImage.js";
 import styled from "styled-components";
 import Link from "next/link.js";
 import FavoriteButton from "../FavoriteButton/index.js";
-import { useAtom } from "jotai";
-import { piecesAtom, toggleFavoriteAtom } from "@/pages/_app.js";
+import { useAtomValue, useSetAtom } from "jotai";
 import React from "react";
+import { piecesAtom } from "@/lib/atoms/pieces.js";
+import { piecesInfoAtom, toggleFavorite } from "@/lib/atoms/piecesInfo.js";
 
 const ImageContainer = styled.div`
   position: relative;
@@ -53,8 +54,9 @@ const ScreenReaderOnly = styled.span`
   border-width: 0;
 `;
 
-function ArtPiecePreview({ slug, isFavorite, onToggleFavorite }) {
-  const [pieces] = useAtom(piecesAtom);
+function ArtPiecePreview({ slug, isFavorite }) {
+  const pieces = useAtomValue(piecesAtom);
+  const dispatch = useSetAtom(piecesInfoAtom);
   const piece = pieces.find((piece) => piece.slug === slug);
 
   if (!piece) {
@@ -68,7 +70,7 @@ function ArtPiecePreview({ slug, isFavorite, onToggleFavorite }) {
       <ImageContainer>
         <FavoriteButton
           isFavorite={isFavorite}
-          onToggleFavorite={() => onToggleFavorite(slug)}
+          onToggleFavorite={() => dispatch(toggleFavorite(slug))}
           positionAbsolute={true}
         />
         <StyledImage
